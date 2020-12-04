@@ -51,13 +51,7 @@ class Passport {
     }
 
     var isValid: Bool {
-        return ecl != nil &&
-            pid != nil &&
-            eyr != nil &&
-            hcl != nil &&
-            byr != nil &&
-            iyr != nil &&
-            hgt != nil
+        return ecl != nil && pid != nil && eyr != nil && hcl != nil && byr != nil && iyr != nil && hgt != nil
     }
 
     var isFullyValid: Bool {
@@ -65,85 +59,21 @@ class Passport {
             return false
         }
 
-        if let birthYear = Int(byr!) {
-            if !(birthYear >= 1920 && birthYear <= 2002) {
-                return false
-            }
-        } else {
-            return false
-        }
-
-        if let issueYear = Int(iyr!) {
-            if !(issueYear >= 2010 && issueYear <= 2020) {
-                return false
-            }
-        } else {
-            return false
-        }
-
-        if let expirationYear = Int(eyr!) {
-            if !(expirationYear >= 2020 && expirationYear <= 2030) {
-                return false
-            }
-        } else {
-            return false
-        }
-
+        var valid = true
+        valid = valid && Int(byr!) != nil && Int(byr!)! >= 1920 && Int(byr!)! <= 2002
+        valid = valid && Int(iyr!) != nil && Int(iyr!)! >= 2010 && Int(iyr!)! <= 2020
+        valid = valid && Int(eyr!) != nil && Int(eyr!)! >= 2020 && Int(eyr!)! <= 2030
         let heightUnit = hgt!.suffix(2)
-        if let heightValue = Int(hgt!.prefix(hgt!.count - 2)) {
-            switch heightUnit {
-            case "cm":
-                if !(heightValue >= 150 && heightValue <= 193) {
-                    return false
-                }
-            case "in":
-                if !(heightValue >= 59 && heightValue <= 76) {
-                    return false
-                }
-            default:
-                return false
-            }
-        } else {
-            return false
-        }
+        let heightValue = Int(hgt!.prefix(hgt!.count - 2))
+        valid = valid && heightValue != nil &&
+            ((heightUnit == "cm" && heightValue! >= 150 && heightValue! <= 193) ||
+            (heightUnit == "in" && heightValue! >= 59 && heightValue! <= 76))
+        valid = valid && hcl!.count == 7 && hcl!.first! == "#"
+        valid = valid && Int(hcl!.suffix(6), radix: 16) != nil
+        valid = valid && ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(ecl!)
+        valid = valid && pid!.count == 9
+        valid = valid && Int(pid!) != nil
 
-        if hcl!.count != 7 || hcl!.first! != "#" {
-            return false
-        } else {
-            let intCheck = Int(hcl!.suffix(6), radix: 16)
-            if intCheck == nil {
-                return false
-            }
-        }
-
-        switch ecl {
-        case "amb":
-            break
-        case "blu":
-            break
-        case "brn":
-            break
-        case "gry":
-            break
-        case "grn":
-            break
-        case "hzl":
-            break
-        case "oth":
-            break
-        default:
-            return false
-        }
-
-        if pid!.count != 9 {
-            return false
-        } else {
-            let intCheck = Int(pid!)
-            if intCheck == nil {
-                return false
-            }
-        }
-
-        return true
+        return valid
     }
 }

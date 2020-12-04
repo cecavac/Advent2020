@@ -29,26 +29,10 @@ class Validator {
     }
 
     var validPassports: Int {
-        var result = 0
-
-        for passport in passports {
-            if passport.isValid {
-                result += 1
-            }
-        }
-
-        return result
+        return passports.filter { passport in return passport.isValid}.count
     }
 
     var fullyValidPassports: Int {
-        var result = 0
-
-        for passport in passports {
-            if passport.isFullyValid {
-                result += 1
-            }
-        }
-
-        return result
+        return passports.filter { passport in return passport.isFullyValid}.count
     }
 }
