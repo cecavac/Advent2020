@@ -19,33 +19,23 @@ class Boarding {
         boardingIds.sort() { $0 < $1 }
     }
 
-    private func binSearch(low: Int, high: Int, pattern: String) -> Int {
-        var min = low
-        var max = high
+    private func binSearch(input: String) -> Int {
+        var result = 0
 
-        for character in pattern {
-            let mid = (max - min) / 2 + 1
-            if character == "F" || character == "L" {
-                max -= mid
-            } else if character == "B" || character == "R" {
-                min += mid
-            } else {
-                print("Error, unexpected character \(character)")
+        for character in input {
+            result *= 2
+            if character == "B" || character == "R" {
+                result += 1
             }
         }
 
-        // min and max are the same at this point
-        return min
+        return result
     }
 
     private func decode(boardingPass data: String) -> Int {
-        let row = binSearch(low: 0, high: 127, pattern: String(data.prefix(7)))
-        let col = binSearch(low: 0, high: 7, pattern: String(data.suffix(3)))
+        let row = binSearch(input: String(data.prefix(7)))
+        let col = binSearch(input: String(data.suffix(3)))
 
-        return seatID(row: row, col: col)
-    }
-
-    private func seatID(row: Int, col: Int) -> Int {
         return row * 8 + col
     }
 
