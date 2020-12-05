@@ -13,9 +13,10 @@ class Boarding {
     init(_ input: String) {
         let lines = input.split(separator: "\n")
         for line in lines {
-            let position = decode(boardingPass: String(line))
-            boardingIds.append(seatID(row: position.0, col: position.1))
+            boardingIds.append(decode(boardingPass: String(line)))
         }
+
+        boardingIds.sort() { $0 < $1 }
     }
 
     private func binSearch(low: Int, high: Int, pattern: String) -> Int {
@@ -37,33 +38,22 @@ class Boarding {
         return min
     }
 
-    func decode(boardingPass data: String) -> (Int, Int) {
+    private func decode(boardingPass data: String) -> Int {
         let row = binSearch(low: 0, high: 127, pattern: String(data.prefix(7)))
         let col = binSearch(low: 0, high: 7, pattern: String(data.suffix(3)))
 
-        return (row, col)
+        return seatID(row: row, col: col)
     }
 
-    func seatID(row: Int, col: Int) -> Int {
+    private func seatID(row: Int, col: Int) -> Int {
         return row * 8 + col
     }
 
     var highestSeatId: Int? {
-        var result = -1
-
-        for id in boardingIds {
-            result = max(result, id)
-        }
-
-        if result != -1 {
-            return result
-        } else {
-            return nil
-        }
+        return boardingIds.last
     }
 
     var freeSeat: Int? {
-        boardingIds.sort() { $0 < $1 }
         for i in 0..<boardingIds.count - 1 {
             if boardingIds[i] + 2 == boardingIds[i + 1] {
                 return boardingIds[i] + 1
