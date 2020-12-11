@@ -12,32 +12,26 @@ class RealSeating : Seating {
         return 5
     }
 
-    func neighborInSight(i: Int, j: Int, direction: Int) -> Int {
-        let offsets = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1], [-1, -1], [1, 1]]
-        let offsetI = offsets[direction][0]
-        let offsetJ = offsets[direction][1]
-        var newI = i + offsetI
-        var newJ = j + offsetJ
-
-        while let neighbor = lobby.grab(newI)?.grab(newJ) {
-            if neighbor == "L" {
-                return 0
-            } else if neighbor == "#" {
-                return 1
-            }
-
-            newI += offsetI
-            newJ += offsetJ
-        }
-
-        return 0
-    }
-
     override func occupiedNeighbors(i: Int, j: Int) -> Int {
         var occupiedNeigbors = 0
 
-        for direction in 0..<8 {
-            occupiedNeigbors += neighborInSight(i: i, j: j, direction: direction)
+        for offset in [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1], [-1, -1], [1, 1]] {
+            let offsetI = offset[0]
+            let offsetJ = offset[1]
+            var newI = i + offsetI
+            var newJ = j + offsetJ
+
+            while let neighbor = lobby.grab(newI)?.grab(newJ) {
+                if neighbor == "L" {
+                    break
+                } else if neighbor == "#" {
+                    occupiedNeigbors += 1
+                    break
+                }
+
+                newI += offsetI
+                newJ += offsetJ
+            }
         }
 
         return occupiedNeigbors
