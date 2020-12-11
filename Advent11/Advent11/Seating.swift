@@ -23,32 +23,28 @@ class Seating {
 
     var occupied: Int {
         var result = 0
+
         for i in lobby.indices {
-            result += (lobby[i].filter { $0 == "#" }).count
+            result += lobby[i].filter { $0 == "#" }.count
         }
+
         return result
     }
 
     func occupiedNeighbors(i: Int, j: Int) -> Int {
-        var occupiedNeigbors = 0
-        let offsets = [-1, 0, 1]
-        for iOffset in offsets {
-            for jOffset in offsets {
-                let neighborI = i + iOffset
-                let neighborJ = j + jOffset
+        var neighbours = [Character]()
 
-                if neighborI == i && neighborJ == j {
-                    continue
-                } else {
-                    if neighborI >= 0 && neighborI < lobby.count &&
-                        neighborJ >= 0 && neighborJ < lobby[0].count &&
-                        lobby[neighborI][neighborJ] == "#" {
-                        occupiedNeigbors += 1
+        for neighborI in i - 1...i + 1 {
+            for neighborJ in j - 1...j + 1 {
+                if neighborI != i || neighborJ != j {
+                    if let neighbor = lobby.grab(neighborI)?.grab(neighborJ) {
+                        neighbours.append(neighbor)
                     }
                 }
             }
         }
-        return occupiedNeigbors
+
+        return neighbours.filter { $0 == "#" }.count
     }
 
     func run() -> Int {
@@ -86,4 +82,10 @@ class Seating {
 
         return occupied
     }
+}
+
+extension Array {
+   public func grab(_ i: Int) -> Element? {
+     return (i >= 0 && i < count) ? self[i] : nil
+   }
 }

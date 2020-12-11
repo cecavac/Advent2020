@@ -13,55 +13,24 @@ class RealSeating : Seating {
     }
 
     func neighborInSight(i: Int, j: Int, direction: Int) -> Int {
-        var offsetI: Int? = nil
-        var offsetJ: Int? = nil
+        let offsets = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1], [-1, -1], [1, 1]]
+        let offsetI = offsets[direction][0]
+        let offsetJ = offsets[direction][1]
+        var newI = i + offsetI
+        var newJ = j + offsetJ
 
-        switch direction {
-        case 0:
-            offsetI = 0
-            offsetJ = 1
-        case 1:
-            offsetI = 0
-            offsetJ = -1
-        case 2:
-            offsetI = 1
-            offsetJ = 0
-        case 3:
-            offsetI = -1
-            offsetJ = 0
-        case 4:
-            offsetI = -1
-            offsetJ = -1
-        case 5:
-            offsetI = 1
-            offsetJ = 1
-        case 6:
-            offsetI = -1
-            offsetJ = 1
-        case 7:
-            offsetI = 1
-            offsetJ = -1
-        default:
-            print("Error direction: \(direction)")
-        }
-
-        var newI = i
-        var newJ = j
-        while true {
-            newI += offsetI!
-            newJ += offsetJ!
-
-            if newI >= 0 && newI < lobby.count &&
-                newJ >= 0 && newJ < lobby[0].count {
-                if lobby[newI][newJ] == "L" {
-                    return 0
-                } else if lobby[newI][newJ] == "#" {
-                    return 1
-                }
-            } else {
+        while let neighbor = lobby.grab(newI)?.grab(newJ) {
+            if neighbor == "L" {
                 return 0
+            } else if neighbor == "#" {
+                return 1
             }
+
+            newI += offsetI
+            newJ += offsetJ
         }
+
+        return 0
     }
 
     override func occupiedNeighbors(i: Int, j: Int) -> Int {
