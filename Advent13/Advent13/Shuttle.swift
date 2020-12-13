@@ -22,7 +22,6 @@ class Shuttle {
             if let departure = Int(String(elements[i])) {
                 departures.append(departure)
                 grp.append((Int64(departure), Int64(i)))
-                originalData.insert("\(departure)\(i)")
             }
         }
     }
@@ -55,11 +54,6 @@ class Shuttle {
     }
 
     func perfectTiming() -> Int64 {
-        if grp.count % 2 == 1 {
-            // Add an extra one due to pair processing of original and unoriginal data
-            grp.append(grp.first!)
-        }
-
         while grp.count > 1 {
             let element1 = grp.removeFirst()
             let id1 = element1.0
@@ -68,48 +62,17 @@ class Shuttle {
             let id2 = element2.0
             let offset2 = element2.1
 
-            var time: Int64
-            let increment: Int64
-            var cond1: Bool
-            var cond2: Bool
-            let isOriginal = originalData.contains("\(id1)\(offset1)")
+            var time = min(id1 - offset1, id2 - offset2)
+            let increment: Int64 = min(id1, id2)
 
-            if isOriginal {
-                time = 0
-                increment = 1
-                cond1 = (time + offset1) % id1 != 0
-                cond2 = (time + offset2) % id2 != 0
-            } else {
-                let time1 = id1 + offset1
-                let time2 = id2 + offset2
-
-                if time1 < time2 {
-                    time = time1
-                    increment = id1
-                } else {
-                    time = time2
-                    increment = id2
-                }
-
-                cond1 = (time - offset1) % id1 != 0
-                cond2 = (time - offset2) % id2 != 0
-            }
-
-            while cond1 || cond2 {
+            while (time + offset1) % id1 != 0 || (time + offset2) % id2 != 0 {
                 time += increment
-                if isOriginal {
-                    cond1 = (time + offset1) % id1 != 0
-                    cond2 = (time + offset2) % id2 != 0
-                } else {
-                    cond1 = (time - offset1) % id1 != 0
-                    cond2 = (time - offset2) % id2 != 0
-                }
-
             }
 
-            grp.append((lcm(id1, id2), time))
+            let newId = lcm(id1, id2)
+            grp.append((newId, newId - time))
         }
 
-        return grp[0].1
+        return grp[0].0 - grp[0].1
     }
 }
