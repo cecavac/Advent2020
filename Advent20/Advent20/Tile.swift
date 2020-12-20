@@ -21,7 +21,7 @@ class Tile {
     var orientation = Side.Top
     var rotations = [[[[Character]]]]()
     var flipIndex = 0
-    var borders = [[[String]]]()
+    var borders = [[[Int]]]()
 
     init(_ input: String) {
         let lines = input.split(separator: "\n")
@@ -52,7 +52,7 @@ class Tile {
         rotations1.append(Tile.rotate(rotations1[Side.Bottom.rawValue]))
         rotations.append(rotations1)
 
-        cacheBorders()
+        hashBorders()
     }
 
     public static func rotate(_ base: [[Character]]) -> [[Character]]{
@@ -83,36 +83,36 @@ class Tile {
         return result
     }
 
-    func cacheBorders() {
+    func hashBorders() {
         for _ in 0..<2 {
-            var flipBorders = [[String]]()
+            var flipBorders = [[Int]]()
             for _ in 0..<4 {
-                var rotationBorders = [String]()
+                var rotationBorders = [Int]()
                 let base = data
 
                 var topBorder = ""
                 for j in 0..<10 {
                     topBorder += "\(base[0][j])"
                 }
-                rotationBorders.append(topBorder)
+                rotationBorders.append(topBorder.hashValue)
 
                 var rightBorder = ""
                 for i in 0..<10 {
                     rightBorder += "\(base[i][9])"
                 }
-                rotationBorders.append(rightBorder)
+                rotationBorders.append(rightBorder.hashValue)
 
                 var bottomBorder = ""
                 for j in 0..<10 {
                     bottomBorder += "\(base[9][j])"
                 }
-                rotationBorders.append(bottomBorder)
+                rotationBorders.append(bottomBorder.hashValue)
 
                 var leftBorder = ""
                 for i in 0..<10 {
                     leftBorder += "\(base[i][0])"
                 }
-                rotationBorders.append(leftBorder)
+                rotationBorders.append(leftBorder.hashValue)
 
                 flipBorders.append(rotationBorders)
                 rotate()
