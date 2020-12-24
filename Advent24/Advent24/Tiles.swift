@@ -93,35 +93,24 @@ class Tiles {
                 whiteTiles.remove(index)
             }
 
-            // Process black tiles
-            for index in originalBlackTiles {
-                var neighbors = 0
+            let processTiles: (Set<HexIndex>, [Int]) -> () = { data, conditions in
+                for index in data {
+                    var neighbors = 0
 
-                for (_, offset) in neighborOffsets[index.z] {
-                    if originalBlackTiles.contains(index + offset) {
-                        neighbors += 1
+                    for (_, offset) in self.neighborOffsets[index.z] {
+                        if originalBlackTiles.contains(index + offset) {
+                            neighbors += 1
+                        }
                     }
-                }
 
-                if neighbors == 0 || neighbors > 2 {
-                    flip(index: index)
+                    if conditions.contains(neighbors) {
+                        self.flip(index: index)
+                    }
                 }
             }
 
-            // Process white tiles
-            for index in whiteTiles {
-                var neighbors = 0
-
-                for (_, offset) in neighborOffsets[index.z] {
-                    if originalBlackTiles.contains(index + offset) {
-                        neighbors += 1
-                    }
-                }
-
-                if neighbors == 2 {
-                    flip(index: index)
-                }
-            }
+            processTiles(originalBlackTiles, [0] + Array(3...6))
+            processTiles(whiteTiles, [2])
         }
     }
 }
